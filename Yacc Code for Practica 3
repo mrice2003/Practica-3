@@ -1,0 +1,52 @@
+%{
+#include <stdio.h>
+int yylex();
+void yyerror(const char* s);
+%}
+
+%token ARTICLE NOUN VERB PREP EOL
+
+%%
+sentence: noun_phrase verb_phrase EOL { printf("PASS\n"); }
+        | EOL { printf("PASS\n"); }
+        ;
+
+noun_phrase: cmplx_noun
+           | cmplx_noun prep_phrase { printf("PASS\n"); }
+           ;
+
+verb_phrase: cmplx_verb
+           | cmplx_verb prep_phrase { printf("PASS\n"); }
+           ;
+
+prep_phrase: prep cmplx_noun { printf("PASS\n"); }
+           ;
+
+cmplx_noun: article noun { printf("PASS\n"); }
+          ;
+
+cmplx_verb: verb
+          | verb noun_phrase { printf("PASS\n"); }
+          ;
+
+article: ARTICLE { printf("PASS\n"); }
+       ;
+
+noun: NOUN { printf("PASS\n"); }
+    ;
+
+verb: VERB { printf("PASS\n"); }
+    ;
+
+prep: PREP { printf("PASS\n"); }
+    ;
+
+%%
+void yyerror(const char* s) {
+    fprintf(stderr, "Error: %s\n", s);
+}
+
+int main() {
+    yyparse();
+    return 0;
+}
